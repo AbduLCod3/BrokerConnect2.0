@@ -1,10 +1,3 @@
-
-
-
 export default function IndexPage() {
-  return (
-    <div>
-    INDEX PAGE
-    </div>
-  );
+  return <div className="mt-10">INDEX PAGE</div>;
 }

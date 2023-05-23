@@ -17,15 +17,20 @@ export default function Header() {
       </a>
 
       <div className="flex border gap-6 rounded border-gray-300 py-2 px-4 shadow-md shadow-gray-300">
-        <div>Location</div>
+       
+        <div className=" px-20">Location</div>
+      
         <div className="border-l border-gray-500 "></div>
-        <div>Date</div>
-        <div className="border-l border-gray-500 "></div>
-        <div>Guests</div>
+
         <button className="bg-primary text-white p-1 rounded-full">
           <MagnifyingGlassCircleIcon className="w-4 h-4" />
         </button>
       </div>
+
+      <div className="bg-primary flex border gap-6 rounded border-gray-300 py-2 px-4 shadow-md shadow-gray-300">
+        <button className="text-white font-bold">Explore</button>
+      </div>
+
       <Link
         to={"/login"}
         className="flex items-center border gap-2 rounded border-gray-300 py-2 px-4"

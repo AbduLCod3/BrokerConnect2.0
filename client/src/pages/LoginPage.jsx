@@ -1,9 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  //
+  const [redirect, setRedirect] = useState(false);
 
   async function handleLoginSubmit(e) {
     e.preventDefault();
@@ -11,10 +14,13 @@ export default function LoginPage() {
     try {
       await axios.post("/login", { email, password });
       alert("Success, Now You're Logged In");
+      setRedirect(true);
     } catch (err) {
       alert("Login Failed! Try Again");
     }
   }
+
+  if (redirect) return <Navigate to={"/"} />;
 
   //onSumbit //onSubmit
 

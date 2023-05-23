@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const { connect, connection } = require("mongoose");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 // Help different ports communicate
 const cors = require("cors");
@@ -9,6 +10,7 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT || 3001;
 const SALT_ROUNDS = 6; // 6 is a reasonable value
+const jwtSecret = process.env.SECRET;
 
 // Establish Database Conenction
 // Database connection
@@ -69,8 +71,19 @@ app.post("/login", async (req, res) => {
   if (findUser) {
     // Check if password is correct
     const isPasswordCorrect = bcrypt.compareSync(password, findUser.password);
-    // res.cookie('token', '').json('password is correct');
-    isPasswordCorrect ? res.json("password is correct") : res.json("Incorrect");
+    if (isPasswordCorrect) {
+      jwt.sign(
+        { email: findUser.email, id: findUser._id },
+        jwtSecret,
+        {},
+        (error, token) => {
+          if (error) throw error;
+          res.cookie("token", token).json("password is correct");
+        }
+      );
+    } else {
+      res.status(400).json("password is incorrect");
+    }
   } else {
     res.json("User Found");
   }
