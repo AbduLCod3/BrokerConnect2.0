@@ -11,10 +11,23 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function registerUser(e) {
+  async function registerUser(e) {
     e.preventDefault();
-    // send request to API
-    axios.get("/test");
+
+    try {
+      // send request to API
+      await axios.post("/register", {
+        firstName,
+        lastName,
+        middleName,
+        phoneNumber,
+        email,
+        password,
+      });
+      alert("Welcome To Dallal-Ki! | Now, You're Registered!");
+    } catch (e) {
+      alert("Registration Failed. Try again");
+    }
   }
 
   return (
