@@ -10,8 +10,15 @@ export default function LoginPage() {
           <input type="password" placeholder="password" />
           <button className="primary font-bold">Login</button>
 
-          <div className="text-center py-2 gap-2 flex flex-col "> OR
-            <Link className="border rounded py-1 mx-1 bg-primary text-white font-bold " to={"/register"}>Register</Link>
+          <div className="text-center py-2 gap-2 flex flex-col ">
+            {" "}
+            OR
+            <Link
+              to={"/register"}
+              className="border rounded py-1 mx-1 bg-primary text-white font-bold "
+            >
+              Register
+            </Link>
           </div>
         </form>
       </div>
