@@ -1,20 +1,27 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 export default function AccountPage() {
+  const { ready, user, setUser } = useContext(UserContext);
+  const [redirect, setRedirect] = useState(null);
+
   async function logout() {
     await axios.post("/logout");
+    setRedirect("/");
+    setUser(null);
   }
 
-  const { sendRequest, user } = useContext(UserContext);
+  if (redirect) {
+    return <Navigate to={redirect} />;
+  }
 
-  if (!sendRequest) {
+  if (!ready) {
     return "Processing Login ...";
   }
 
-  if (sendRequest && !user) {
+  if (ready && !user && !redirect) {
     return <Navigate to={"/login"} />;
   }
 
@@ -47,19 +54,20 @@ export default function AccountPage() {
       {subpage === "profile" && (
         <div className=" text-center max-w-sm mx-auto">
           <div className="border rounded border-gray-300 flex py-1 justify-around ">
-            {user.firstName} | Middle Name | {user.lastName}
+            {user.firstName} | {user.middleName} | {user.lastName}
           </div>
           <div className="border rounded border-gray-300 flex py-1 justify-around mt-2">
-            {user.firstName} | Middle Name | {user.lastName}
+            {user.email} | {user.phoneNumber}
           </div>
-          <div className="border rounded border-gray-300 flex py-1 justify-around mt-2">
-            {user.email}  | {user.phoneNumber}
-          </div>
-          <button onClick={logout} className="bg-primary max-w-2xl text-white rounded py-1 mt-2">
+          <button
+            onClick={logout}
+            className="bg-primary text-white font-bold py-2 px-6 rounded mt-2"
+          >
             Signout
           </button>
         </div>
       )}
+      {subpage === "listings"}
     </div>
   );
 }
