@@ -1,8 +1,23 @@
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 // import { PlusIcon } from "@heroicons/react/24/solid";
 
 export default function ListingPage() {
+  const [title, setTitle] = useState("");
+  const [address, setAddress] = useState("");
+  const [description, setDescription] = useState("");
+  const [cost, setCost] = useState("");
+
+  const [newPhotos, setNewPhotos] = useState("");
+  const [oldPhotos, setOldPhotos] = useState([]);
+
   const { action } = useParams();
+
+  async function addPhoto(e) {
+    e.preventDefault();
+    await axios.post("/upload", { link: newPhotos });
+  }
 
   return (
     <div>
@@ -20,14 +35,43 @@ export default function ListingPage() {
       {action === "new" && (
         <div>
           <form>
-            <input type="text" placeholder="Title Ex: Apartment, House" />
-            <input type="text" placeholder="Address " />
-            <input type="text" placeholder="2BR 1BATH 1250sqf " />
-            <input type="text" placeholder="Cost" />
+            <input
+              type="text"
+              placeholder="Title Ex: Apartment, House"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Address "
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="2BR 1BATH 1250sqf "
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Cost"
+              value={cost}
+              onChange={(e) => setCost(e.target.value)}
+            />
             <div className="flex ">
-              <input type="text" placeholder="Upload Pics" className="mr-10"/>
+              <input
+                type="text"
+                placeholder="Upload Pics"
+                className="mr-10"
+                value={newPhotos}
+                onChange={(e) => setNewPhotos(e.target.value)}
+              />
 
-              <button className="border bg-primary text-white font-semibold rounded px-4">
+              <button
+                onClick={addPhoto}
+                className="border bg-primary text-white font-semibold rounded px-4"
+              >
                 +&nbsp;Photos
               </button>
             </div>

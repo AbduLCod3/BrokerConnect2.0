@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 const cookieParser = require("cookie-parser");
+const imageDownloader = require("image-downloader");
 // Help different ports communicate
 const cors = require("cors");
 
@@ -116,6 +117,15 @@ app.post("/logout", (req, res) => {
   // res.clearCookie('token')
 });
 
+app.post("/upload", async (req, res) => {
+  const imageName = Date.now + ".jpg";
+  const { link } = req.body;
+  await imageDownloader.image({
+    url: link,
+    dest: __dirname + "/uploads/" + imageName,
+  });
+  res.json(__dirname + "/uploads/" + imageName);
+});
 // Listen
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
