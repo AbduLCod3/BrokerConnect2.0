@@ -111,6 +111,11 @@ app.get("/profile", (req, res) => {
   }
 });
 
+app.post("/logout", (req, res) => {
+  res.cookie("token", "").json(true);
+  // res.clearCookie('token')
+});
+
 // Listen
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
