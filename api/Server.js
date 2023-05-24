@@ -4,6 +4,7 @@ const { connect, connection } = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./models/User");
+const cookieParser = require("cookie-parser");
 // Help different ports communicate
 const cors = require("cors");
 
@@ -25,7 +26,9 @@ connection.once("open", () => {
   console.log("connected to mongo");
 });
 
+// +++ +++ | Middleware | +++ +++ //
 app.use(express.json());
+app.use(cookieParser());
 
 app.use(
   cors({
@@ -64,21 +67,24 @@ app.post("/register", async (req, res) => {
 // +++ +++ | READ | +++ +++ //
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  // findUser ==== UserDoc
-  const findUser = await User.findOne({ email });
+  // foundUser ==== UserDoc
+  const foundUser = await User.findOne({ email });
 
   // Check if user exist
-  if (findUser) {
+  if (foundUser) {
     // Check if password is correct
-    const isPasswordCorrect = bcrypt.compareSync(password, findUser.password);
+    const isPasswordCorrect = bcrypt.compareSync(password, foundUser.password);
     if (isPasswordCorrect) {
       jwt.sign(
-        { email: findUser.email, id: findUser._id },
+        {
+          email: foundUser.email,
+          id: foundUser._id,
+        },
         jwtSecret,
         {},
         (error, token) => {
           if (error) throw error;
-          res.cookie("token", token).json("password is correct");
+          res.cookie("token", token).json(foundUser);
         }
       );
     } else {
@@ -86,6 +92,22 @@ app.post("/login", async (req, res) => {
     }
   } else {
     res.json("User Found");
+  }
+});
+
+//
+app.get("/profile", (req, res) => {
+  const { token } = req.cookies;
+  if (token) {
+    jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+      if (err) throw err;
+      const { email, firstName, lastName, _id } = await User.findById(
+        userData.id
+      );
+      res.json({ firstName, lastName, email, _id });
+    });
+  } else {
+    res.json(null);
   }
 });
 
