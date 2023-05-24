@@ -14,8 +14,8 @@ export default function Header() {
   return (
     <header className="flex justify-between">
       <Link to={"/"} href="" className="flex items-center gap-1 ">
-        <HomeModernIcon className="w-8 h-8" />
-        <span className="font-bold text-xl">Dallal-Ki</span>
+        <HomeModernIcon className="w-8 h-8 text-primary" />
+        <span className="font-bold text-xl text-primary">Dallal-Ki</span>
       </Link>
 
       <div className="flex border gap-6 rounded border-gray-300 py-2 px-4 shadow-md shadow-gray-300">

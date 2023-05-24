@@ -2,6 +2,7 @@ import { useContext, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
+import ListingPage from "./ListingPage";
 
 export default function AccountPage() {
   const { ready, user, setUser } = useContext(UserContext);
@@ -31,22 +32,26 @@ export default function AccountPage() {
   }
   console.log(subpage);
 
-  function linkClassess(type = null) {
+  function linkClasses(type = null) {
     let classes = "py-2 px-6";
     if (type === subpage) {
       classes += " bg-primary text-white rounded";
+    } else {
+      classes += "bg-gray-200";
     }
+
+    return classes;
   }
 
   return (
     <div>
       <nav className="w-full flex justify-center mt-8 gap-4 mb-8">
         {/* // favorites ==== bookings // accomodations === listings */}
-        <Link className={linkClassess("profile")} to={"/account"}>
+        <Link className={linkClasses("profile")} to={"/account"}>
           My Profile
         </Link>
 
-        <Link className={linkClassess("listings")} to={"/account/listings"}>
+        <Link className={linkClasses("listings")} to={"/account/listings"}>
           My Listings
         </Link>
       </nav>
@@ -67,7 +72,7 @@ export default function AccountPage() {
           </button>
         </div>
       )}
-      {subpage === "listings"}
+      {subpage === "listings" && <ListingPage />}
     </div>
   );
 }
