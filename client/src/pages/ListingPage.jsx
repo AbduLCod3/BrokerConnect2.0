@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 // import { PlusIcon } from "@heroicons/react/24/solid";
 
@@ -11,12 +11,36 @@ export default function ListingPage() {
 
   const [newPhotos, setNewPhotos] = useState("");
   const [oldPhotos, setOldPhotos] = useState([]);
+  const [redirect, setRedirect] = useState("");
 
   const { action } = useParams();
 
   async function addPhoto(e) {
     e.preventDefault();
-    await axios.post("/upload", { link: newPhotos });
+    const { data: filename } = await axios.post("/upload", { link: newPhotos });
+    setOldPhotos((prev) => {
+      return [...oldPhotos, filename];
+    });
+    setNewPhotos("");
+  }
+
+  async function addListing(e) {
+    e.preventDefault();
+    const listingData = {
+      
+    };
+    await axios.post("/listings", {
+      title,
+      address,
+      description,
+      cost,
+      oldPhotos,
+    });
+    setRedirect("/account/listings");
+  }
+
+  if (redirect) {
+    return <Navigate to={redirect} />;
   }
 
   return (
@@ -34,7 +58,7 @@ export default function ListingPage() {
 
       {action === "new" && (
         <div>
-          <form>
+          <form onSubmit={addListing}>
             <input
               type="text"
               placeholder="Title Ex: Apartment, House"
@@ -55,7 +79,7 @@ export default function ListingPage() {
             />
             <input
               type="text"
-              placeholder="Cost"
+              placeholder="cost"
               value={cost}
               onChange={(e) => setCost(e.target.value)}
             />
@@ -75,7 +99,22 @@ export default function ListingPage() {
                 +&nbsp;Photos
               </button>
             </div>
-            <button className="bg-primary flex text-center border gap-6 rounded border-gray-300 py-2 px-2 shadow-md shadow-gray-300 text-white font-bold mt-10 ml-80">
+            <div className="mt-2 gap-2 grid grid-cols-3 md:grid-cols-4 ">
+              {oldPhotos.length > 0 &&
+                oldPhotos.map((link) => (
+                  <div>
+                    <img
+                      className="rounded "
+                      src={"http://localhost:3001/photoFolder/" + link}
+                      alt=""
+                    />
+                  </div>
+                ))}
+            </div>
+            <button
+            
+              className="bg-primary flex text-center border gap-6 rounded border-gray-300 py-2 px-2 shadow-md shadow-gray-300 text-white font-bold mt-10 ml-80"
+            >
               + Add Listing
             </button>
           </form>

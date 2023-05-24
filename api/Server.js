@@ -1,4 +1,6 @@
 require("dotenv").config();
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const { connect, connection } = require("mongoose");
 const bcrypt = require("bcryptjs");
@@ -6,6 +8,7 @@ const jwt = require("jsonwebtoken");
 const User = require("./models/User");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
+const Listing = require("./models/Listing");
 // Help different ports communicate
 const cors = require("cors");
 
@@ -30,6 +33,7 @@ connection.once("open", () => {
 // +++ +++ | Middleware | +++ +++ //
 app.use(express.json());
 app.use(cookieParser());
+app.use("/photoFolder", express.static(__dirname + "/photoFolder"));
 
 app.use(
   cors({
@@ -117,15 +121,58 @@ app.post("/logout", (req, res) => {
   // res.clearCookie('token')
 });
 
+console.log(__dirname);
+
+// app.post("/upload", async (req, res) => {
+//   const { link } = req.body;
+//   const imageName = Date.now() + ".jpg";
+//   await imageDownloader.image({
+//     url: link,
+//     dest: __dirname + "/photoFolder/" + imageName,
+//   });
+//   res.json(__dirname + "/photoFolder/" + imageName);
+// });
+
 app.post("/upload", async (req, res) => {
-  const imageName = Date.now + ".jpg";
   const { link } = req.body;
-  await imageDownloader.image({
-    url: link,
-    dest: __dirname + "/uploads/" + imageName,
-  });
-  res.json(__dirname + "/uploads/" + imageName);
+  const imageName = Date.now() + ".jpg";
+  const imageFolderPath = path.join(__dirname, "/photoFolder");
+
+  // Create directory if it doesn't exist
+  if (!fs.existsSync(imageFolderPath)) {
+    fs.mkdirSync(imageFolderPath);
+  }
+
+  const imagePath = path.join(imageFolderPath, imageName);
+
+  try {
+    await imageDownloader.image({
+      url: link,
+      dest: imagePath,
+    });
+    res.json(imageName);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to download image" });
+  }
 });
+
+app.post("/listings", (req, res) => {
+  const { token } = req.cookies;
+  const { title, address, description, cost, oldPhotos } = req.body;
+  jwt.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
+    await Listing.create({
+      title,
+      address,
+      description,
+      cost,
+      oldPhotos,
+      broker: userData.id,
+    });
+  });
+});
+
 // Listen
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);

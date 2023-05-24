@@ -3,12 +3,12 @@ const { Schema, model, default: mongoose } = require("mongoose");
 
 // Create Listing Schema
 const ListingSchema = new Schema({
-  title: { type: String, required: true },
-  address: { type: [String], required: true },
-  Description: { type: String },
+  title: { type: String },
+  address: { type: String },
+  description: { type: String },
 
-  Cost: { type: String, required: true, unique: true },
-  photos: { type: [String], required: true },
+  cost: { type: String },
+  photos: { type: [String] },
   broker: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 });
 

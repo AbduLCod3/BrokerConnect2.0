@@ -7,12 +7,12 @@ const UserSchema = new Schema({
   middleName: { type: String, required: true },
   lastName: { type: String, required: true },
 
-  phoneNumber: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true},
+  phoneNumber: { type: String, required: true },
+  email: { type: String, required: true },
   password: { type: String, required: true },
 });
 
 // Create User Model
 const UserModel = model("User", UserSchema);
 
-module.exports = UserModel
+module.exports = UserModel;
