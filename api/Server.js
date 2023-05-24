@@ -1,6 +1,7 @@
+// Load .env file containing environment variables
 require("dotenv").config();
-const fs = require("fs");
-const path = require("path");
+
+// Importing necessary modules
 const express = require("express");
 const { connect, connection } = require("mongoose");
 const bcrypt = require("bcryptjs");
@@ -9,18 +10,18 @@ const User = require("./models/User");
 const cookieParser = require("cookie-parser");
 const imageDownloader = require("image-downloader");
 const Listing = require("./models/Listing");
-// Help different ports communicate
-const cors = require("cors");
+const cors = require("cors"); // used for setting up cross-origin resource sharing
+const fs = require("fs"); // File system, for handling file paths
+const path = require("path"); // Provides utilities for working with file and directory paths
 
+// Setting up express server
 const app = express();
 const PORT = process.env.PORT || 3001;
-const SALT_ROUNDS = 6; // 6 is a reasonable value
+const SALT_ROUNDS = 6;
 const jwtSecret = process.env.SECRET;
 
-// Establish Database Conenction
-// Database connection
+// Establish database connection (Create)
 connect(process.env.MONGO_URI, {
-  // Having these two properties set to true is best practice when connecting to MongoDB
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -30,7 +31,7 @@ connection.once("open", () => {
   console.log("connected to mongo");
 });
 
-// +++ +++ | Middleware | +++ +++ //
+// Setting up middlewares
 app.use(express.json());
 app.use(cookieParser());
 app.use("/photoFolder", express.static(__dirname + "/photoFolder"));
@@ -42,19 +43,17 @@ app.use(
   })
 );
 
+// Test Route
 app.get("/test", (req, res) => {
   res.json("TEST PASSED");
 });
 
-// +++ +++ | C R U D | CREATE READ UPDATE DELETE | +++ +++ //
-
-// +++ +++ | CREATE | +++ +++ //
+// Register User Route (Create)
 app.post("/register", async (req, res) => {
   const { firstName, lastName, middleName, phoneNumber, email, password } =
     req.body;
 
   try {
-    // userRegister ===== userDoc
     const userRegister = await User.create({
       firstName,
       lastName,
@@ -69,15 +68,12 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// +++ +++ | READ | +++ +++ //
+// Login User Route (Read)
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  // foundUser ==== UserDoc
   const foundUser = await User.findOne({ email });
 
-  // Check if user exist
   if (foundUser) {
-    // Check if password is correct
     const isPasswordCorrect = bcrypt.compareSync(password, foundUser.password);
     if (isPasswordCorrect) {
       jwt.sign(
@@ -100,7 +96,7 @@ app.post("/login", async (req, res) => {
   }
 });
 
-//
+// User Profile Route (Read)
 app.get("/profile", (req, res) => {
   const { token } = req.cookies;
   if (token) {
@@ -116,23 +112,12 @@ app.get("/profile", (req, res) => {
   }
 });
 
+// Logout User Route (Update)
 app.post("/logout", (req, res) => {
   res.cookie("token", "").json(true);
-  // res.clearCookie('token')
 });
 
-console.log(__dirname);
-
-// app.post("/upload", async (req, res) => {
-//   const { link } = req.body;
-//   const imageName = Date.now() + ".jpg";
-//   await imageDownloader.image({
-//     url: link,
-//     dest: __dirname + "/photoFolder/" + imageName,
-//   });
-//   res.json(__dirname + "/photoFolder/" + imageName);
-// });
-
+// Image Upload Route (Create)
 app.post("/upload", async (req, res) => {
   const { link } = req.body;
   const imageName = Date.now() + ".jpg";
@@ -157,6 +142,7 @@ app.post("/upload", async (req, res) => {
   }
 });
 
+// Listing Route (Create)
 app.post("/listings", (req, res) => {
   const { token } = req.cookies;
   const { title, address, description, cost, oldPhotos } = req.body;
@@ -173,7 +159,7 @@ app.post("/listings", (req, res) => {
   });
 });
 
-// Listen
+// Listen on the defined port
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
 });
