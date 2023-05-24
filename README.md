@@ -3,12 +3,6 @@
 BrokerConnect is an online platform that users can advertise a property, search for a property or browse through properties. 
 To list a property, a user needs to sign up first.
 
-## Wireframe
-![Wireframe](https://github.com/DevAbdul-codeHub/BrokerConnect2.0/assets/46938888/39e4fdc7-ec2f-4302-b593-92a12453a7a5)
-
-## ERD
-![ERD](https://github.com/DevAbdul-codeHub/BrokerConnect2.0/assets/46938888/34ce9db5-e79b-491f-a516-f74fdb83542b)
-
 ## Screenshots
 ![final page](https://github.com/DevAbdul-codeHub/BrokerConnect2.0/assets/46938888/a38635b4-5e71-40d0-8f40-c7f3c36a589c)
 
